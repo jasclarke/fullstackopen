@@ -1,7 +1,0 @@
-title Sequence Diagram for adding a new note to the SPA version.
-
-Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
-note right of Browser: Sends form data (note: my new note) and \nthe date of submission in the format of a \nJSON object to the server via an AJAX \nrequest using the POST HTTP method \nso the page does not reload.
-Server->Browser: Responds with a JSON object
-note left of Server: Server processes data submitted via the AJAX request \nand adds it to its data store. It also responds with a \nJSON object {"message": "note created"}
-note right of Browser: Browser continues executing the code \nand updates the entire notes list with \nthe new note being the last item in the list.
