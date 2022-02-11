@@ -1,0 +1,18 @@
+title Sequence Diagram for adding a new note.
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note right of Browser: Sends form data (note: my new note) \nto the server using the POST HTTP method \nbased on the URL of the action attribute as seen above.
+Server->Browser: Responds with a redirect request to https://studies.cs.helsinki.fi/exampleapp/notes
+note left of Server: Server processes data submitted by the form and adds it \nto its data store. It also responds with the status code 302 \nwhich is a request to redirect to specific URL as seen above.
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+Server->Browser: HTML Code
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+note right of Browser: Request due to link tag in head tag.
+Server->Browser: main.css
+note right of Browser: Request due to script tag with src attribute in head tag.
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server->Browser: main.js
+note right of Browser: Browser starts executing code which \nrequests data.json via an AJAX request. \nThis json file has the new note.
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server->Browser: data.json
+note right of Browser: Browser continues executing code which \nprocesses the data into an unordered list \nand adds the it to the element with the \nid notes on the html code.

@@ -1,0 +1,14 @@
+title Sequence Diagram for accessing the SPA version of the notes app.
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+Server->Browser: HTML Code
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+note right of Browser: Request due to link tag in head tag.
+Server->Browser: main.css
+note right of Browser: Request due to script tag with src attribute in head tag.
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server->Browser: spa.js
+note right of Browser: Browser starts executing code which \nrequests data.json via an AJAX request.
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server->Browser: data.json
+note right of Browser: Browser continues executing code which \nprocesses the data into an unordered list \nand adds the it to the element with the \nid notes on the html code.
