@@ -24,7 +24,7 @@ const Part = (props) => {
 
 const Total = (props) => {
     return (
-        <p>Number of exercises {props.total}</p>
+        <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
     )
 }
 
@@ -49,7 +49,7 @@ const App = () => {
       <div>
         <Header course={course}/>
         <Content parts={parts}/>
-        <Total total={parts[0].exercises + parts[1].exercises + parts[2].exercises}/>
+        <Total parts={parts}/>
       </div>
     )
   }
