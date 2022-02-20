@@ -15,16 +15,20 @@ const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</bu
 const Statistic = ({good, neutral, bad}) => {
   const total = good + neutral + bad
 
-  return (
-    <p>
-      Good: {good} <br/>
-      Neutral: {neutral} <br/>
-      Bad: {bad} <br/>
-      Total: {total}<br/>
-      Average: {(good - bad) / total}<br/>
-      Positive: {good/total}%
-    </p>
-  )
+  if (good === 0 && bad === 0 && neutral === 0) {
+    return <p>No Feedback Provided</p>
+  } else { 
+    return (
+      <p>
+        Good: {good} <br/>
+        Neutral: {neutral} <br/>
+        Bad: {bad} <br/>
+        Total: {total}<br/>
+        Average: {(good - bad) / total}<br/>
+        Positive: {good/total}%
+      </p>
+    ) 
+  }
 } 
 
 const App = () => {
