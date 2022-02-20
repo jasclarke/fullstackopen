@@ -12,13 +12,20 @@ const VotingOptions = ({goodClick, badClick, neutralClick}) => (
 
 const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</button>
 
-const Statistic = ({good, neutral, bad}) => (
-  <p>
-    Good: {good} <br />
-    Neutral: {neutral} <br/>
-    Bad: {bad}
-  </p>
-) 
+const Statistic = ({good, neutral, bad}) => {
+  const total = good + neutral + bad
+
+  return (
+    <p>
+      Good: {good} <br/>
+      Neutral: {neutral} <br/>
+      Bad: {bad} <br/>
+      Total: {total}<br/>
+      Average: {(good - bad) / total}<br/>
+      Positive: {good/total}%
+    </p>
+  )
+} 
 
 const App = () => {
   const [good, setGood] = useState(0)
