@@ -12,7 +12,12 @@ const VotingOptions = ({goodClick, badClick, neutralClick}) => (
 
 const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</button>
 
-const StatisticLine = ({text, value}) => <><span>{text + ": " + value}</span><br/></>
+const StatisticLine = ({text, value}) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
+)
 
 const Statistics = ({good, neutral, bad}) => {
   const total = good + neutral + bad
@@ -21,14 +26,16 @@ const Statistics = ({good, neutral, bad}) => {
     return <p>No Feedback Provided</p>
   } else { 
     return (
-      <p>
-        <StatisticLine text="Good" value={good} />
-        <StatisticLine text="Neutral" value={neutral} />
-        <StatisticLine text="Bad" value={bad} />
-        <StatisticLine text="Total" value={total} />
-        <StatisticLine text="Average" value={(good - bad) / total} />
-        <StatisticLine text="Positve" value={good/total + "%"} />
-      </p>
+      <table>
+        <tbody>
+          <StatisticLine text="Good" value={good} />
+          <StatisticLine text="Neutral" value={neutral} />
+          <StatisticLine text="Bad" value={bad} />
+          <StatisticLine text="Total" value={total} />
+          <StatisticLine text="Average" value={(good - bad) / total} />
+          <StatisticLine text="Positve" value={good/total + "%"} />
+        </tbody>
+      </table>
     ) 
   }
 } 
