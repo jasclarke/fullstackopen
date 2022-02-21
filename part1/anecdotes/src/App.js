@@ -1,6 +1,14 @@
 import { useState } from 'react'
 
+const SubHeading = ({text}) => <h2>{text}</h2>
 const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</button>
+const Anecdote = ({text, votes}) => <p>{text}<br/> has {votes} votes.</p>
+const Actions = ({anecdoteClick, voteClick}) => (
+  <>
+    <Button text="Vote" handleClick={voteClick} />
+    <Button text="Next Anecdote" handleClick={anecdoteClick}/>
+  </>
+)
 
 const App = () => {
   const anecdotes = [
@@ -27,12 +35,15 @@ const App = () => {
     setVotes(votesCopy)
   }
 
+  const mostVotesIndex = votes.indexOf(votes.reduce( (previousVote, currentVote) => (currentVote > previousVote) ? currentVote : previousVote))
+
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes.</p>
-      <Button text="Vote" handleClick={() => vote(selected)} />
-      <Button text="Next Anecdote" handleClick={() => setSelected(generateRandomIndex(selected))}/>
+      <SubHeading text="Anecdote of the Day" />
+      <Anecdote text={anecdotes[selected]} votes={votes[selected]} />
+      <Actions voteClick={() => vote(selected)} anecdoteClick={() => setSelected(generateRandomIndex(selected))} />
+      <SubHeading text="Anecdote with the most Votes" />
+      <Anecdote text={anecdotes[mostVotesIndex]} votes={votes[mostVotesIndex]} />
     </div>
   )
 }
