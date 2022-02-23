@@ -1,15 +1,39 @@
 import { useState } from 'react'
 
-const Input = ({label, value, handleInput}) => (
-  <div>
-    {label}: <input onChange={handleInput} value={value} />
-  </div>
-)
-
 const Contact = ({person}) => (
   <>
     <span>{person.name} {person.number}</span><br/>
   </>
+)
+
+const Filter = ({query, handleFilter}) => (
+  <div>
+    Filter Contacts: <input onChange={handleFilter} value={query} />
+  </div>
+)
+
+const ContactForm = ({handleName, nameValue, handlePhoneNumber, phoneNumberValue, submitContact}) => (
+  <form>
+    <div>
+      Name: <input onChange={handleName} value={nameValue} />
+    </div>
+    <div>
+      Phone Number: <input onChange={handlePhoneNumber} value={phoneNumberValue} />
+    </div>
+    <div>
+      <button type='submit' onClick={submitContact}>Save</button>
+    </div>
+  </form>
+)
+
+const ContactList = ({contacts}) => (
+  <p>
+    {
+      contacts.filtered.map( contact => (
+        <Contact key={contact.id} person={contact} />
+      ))
+    }
+  </p>
 )
 
 const App = () => {
@@ -24,7 +48,7 @@ const App = () => {
     contacts: [...data], 
     filtered: [...data]
   })
-
+  
   const [newName, setNewName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [searchName, setSearchName] = useState('')
@@ -70,23 +94,17 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Input label='Filter Contacts' handleInput={handleSearchInput} value={searchName} />
+      <Filter query={searchName} handleFilter={handleSearchInput} />
       <h2>New Contact</h2>
-      <form>
-        <Input label='Name' handleInput={handleNameInput} value={newName} />
-        <Input label='Phone Number' handleInput={handlePhoneNumberInput} value={phoneNumber} />
-        <div>
-          <button type='submit' onClick={addPerson}>Save</button>
-        </div>
-      </form>
+      <ContactForm 
+        handleName={handleNameInput} 
+        nameValue={newName} 
+        handlePhoneNumber={handlePhoneNumberInput} 
+        phoneNumberValue={phoneNumber}
+        submitContact={addPerson}
+      />
       <h2>Contacts</h2>
-      <p>
-        {
-          persons.filtered.map( person => (
-            <Contact key={person.id} person={person} />
-          ))
-        }
-      </p>
+      <ContactList contacts={persons} />
     </div>
   )
 }
