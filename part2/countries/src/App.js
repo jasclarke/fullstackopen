@@ -8,7 +8,38 @@ const Search = ({handleInput, value}) => (
   </div>
 )
 
-const Display = ({query}) => {
+const List = ({countries, handleDetailsButton}) => {
+  return countries.map( country => (
+    <span key={country.name.common}>{country.name.common}
+      <button onClick={() => handleDetailsButton(country.name.common)}>Show details</button><br/>
+    </span>
+  ))
+}
+
+const Details = ({country}) => {
+  const capital = country.capital.map(
+    (city, index) => index === (country.capital.length - 1) ? city : city + ', '
+  )
+  
+  const languages = []
+
+  for (const language in country.languages) {
+    languages.push(<li key={country.languages[language]}>{country.languages[language]}<br/></li>)
+  }
+
+  return (
+    <>
+      <h2>{country.name.common}</h2>
+      <span>Capital: {capital}</span><br/>
+      <span>Area: {country.area}</span>
+      <h3>Languages</h3>
+      <ul>{languages}</ul>
+      <img src={country.flags.png} alt={'An image of ' + country.name.common + ' flag'}/>
+    </>
+  )
+}
+
+const Display = ({query, handleDetailsButton}) => {
   const [countries, setCountries] = useState([])
 
   useEffect( () => {
@@ -26,31 +57,9 @@ const Display = ({query}) => {
   if (results.length > 10) {
     return 'Too many matches, refine your filter'
   } else if (results.length <= 10 && results.length > 1) {
-    return results.map( country => (
-      <span key={country.name.common}>{country.name.common}<br/></span>
-    ))
+    return <List handleDetailsButton={handleDetailsButton} countries={results} />
   } else if (results.length === 1) {
-    const result = results[0]
-    const capital = result.capital.map(
-      (city, index) => index === (result.capital.length - 1) ? city : city + ', '
-    )
-    
-    const languages = []
-
-    for (const language in result.languages) {
-      languages.push(<li key={result.languages[language]}>{result.languages[language]}<br/></li>)
-    }
-
-    return (
-      <>
-        <h2>{result.name.common}</h2>
-        <span>Capital: {capital}</span><br/>
-        <span>Area: {result.area}</span>
-        <h3>Languages</h3>
-        <ul>{languages}</ul>
-        <img src={result.flags.png} alt={'An image of ' + result.name.common + ' flag'}/>
-      </>
-    )
+    return <Details country={results[0]} />
   } else {
     return 'No matches found'
   }
@@ -59,11 +68,12 @@ const Display = ({query}) => {
 const App = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const handleSearchInput = (event) => setSearchQuery(event.target.value)
+  const handleShowDetailsButton = (country) => setSearchQuery(country)
 
   return (
     <div>
       <Search handleInput={handleSearchInput} value={searchQuery} />
-      <Display query={searchQuery} />
+      <Display query={searchQuery} handleDetailsButton={handleShowDetailsButton} />
     </div>
   );
 }
