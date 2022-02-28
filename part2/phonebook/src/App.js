@@ -82,14 +82,18 @@ const App = () => {
         number: phoneNumber,
         id: persons.contacts.length + 1
       }
-      const updatedPersons = {...persons}
 
-      updatedPersons.contacts.push(contact)
-      updatedPersons.filtered.push(contact)
-
-      setPersons(updatedPersons)
-      setNewName('')
-      setPhoneNumber('')
+      axios
+        .post('http://localhost:3001/persons', contact)
+        .then(response => {
+          setPersons({
+            ...persons,
+            contacts: persons.contacts.concat(response.data),
+            filtered: persons.contacts.concat(response.data)
+          })
+          setNewName('')
+          setPhoneNumber('')
+        })
     } else {
       alert(`${newName} already exists in the phone book.`)
     }
