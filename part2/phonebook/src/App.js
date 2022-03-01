@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const Contact = ({person}) => (
-  <>
-    <span>{person.name} {person.number}</span><br/>
-  </>
+const Contact = ({person, deleteButton}) => (
+  <span>
+    {person.name} {`${person.number} `}
+    <button onClick={deleteButton}>Delete</button>
+    <br/>
+  </span>
 )
 
 const Filter = ({query, handleFilter}) => (
@@ -27,15 +29,16 @@ const ContactForm = ({handleName, nameValue, handlePhoneNumber, phoneNumberValue
   </form>
 )
 
-const ContactList = ({contacts}) => (
+const ContactList = ({contacts, deleteButton}) => (
   <p>
     {
       contacts.filtered.map( contact => (
-        <Contact key={contact.id} person={contact} />
+        <Contact key={contact.id} person={contact} deleteButton={() => deleteButton(contact)} />
       ))
     }
   </p>
 )
+
 
 const App = () => {
   const [persons, setPersons] = useState({
@@ -87,7 +90,6 @@ const App = () => {
         .create(contact)
         .then(note => {
           setPersons({
-            ...persons,
             contacts: persons.contacts.concat(note),
             filtered: persons.contacts.concat(note)
           })
@@ -96,6 +98,23 @@ const App = () => {
         })
     } else {
       alert(`${newName} already exists in the phone book.`)
+    }
+  }
+
+  const deleteContact = (contact) => {
+    const confirmation = window.confirm(`Delete ${contact.name}?`)
+    
+    if (confirmation) {
+      personService
+        .remove(contact.id)
+        .then(status => {
+          if (status === 200) {
+            setPersons({
+              contacts: persons.contacts.filter(c => c.id !== contact.id),
+              filtered: persons.filtered.filter(c => c.id !== contact.id)
+            })
+          }
+        })  
     }
   }
   
@@ -112,7 +131,7 @@ const App = () => {
         submitContact={addPerson}
       />
       <h2>Contacts</h2>
-      <ContactList contacts={persons} />
+      <ContactList contacts={persons} deleteButton={deleteContact} />
     </div>
   )
 }
