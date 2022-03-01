@@ -88,16 +88,39 @@ const App = () => {
 
       personService
         .create(contact)
-        .then(note => {
+        .then(contact => {
           setPersons({
-            contacts: persons.contacts.concat(note),
-            filtered: persons.contacts.concat(note)
+            contacts: persons.contacts.concat(contact),
+            filtered: persons.contacts.concat(contact)
           })
           setNewName('')
           setPhoneNumber('')
         })
     } else {
-      alert(`${newName} already exists in the phone book.`)
+      const confirmation = window.confirm(
+        `${newName} already exists in the phone book, replace the old number with the new one?`
+      )
+
+      if (confirmation) {
+        const contactToUpdate = {
+          ...persons.contacts.find( person => person.name === newName),
+          number: phoneNumber
+        }
+
+        personService
+          .update(contactToUpdate.id, contactToUpdate)
+          .then(updatedContact => {
+            const updatedContacts = {
+              contacts: [...persons.contacts.filter(contact => contact.name !== updatedContact.name)],
+              filtered: [...persons.filtered.filter(contact => contact.name !== updatedContact.name)]
+            }
+
+            setPersons({
+              contacts: updatedContacts.contacts.concat(updatedContact),
+              filtered: updatedContacts.contacts.concat(updatedContact)
+            })
+          })
+      }
     }
   }
 
@@ -108,12 +131,10 @@ const App = () => {
       personService
         .remove(contact.id)
         .then(status => {
-          if (status === 200) {
-            setPersons({
-              contacts: persons.contacts.filter(c => c.id !== contact.id),
-              filtered: persons.filtered.filter(c => c.id !== contact.id)
-            })
-          }
+          setPersons({
+            contacts: persons.contacts.filter(c => c.id !== contact.id),
+            filtered: persons.filtered.filter(c => c.id !== contact.id)
+          })
         })  
     }
   }
