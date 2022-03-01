@@ -1,6 +1,30 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({notification}) => {
+  if (notification.message === null) {
+    return null
+  }
+
+  const notificationStyle = {
+    color: '',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  if (notification.success) {
+    notificationStyle.color = 'green'
+  } else {
+    notificationStyle.color = 'red'
+  }
+
+  return <div style={notificationStyle}>{notification.message}</div>
+}
+
 const Contact = ({person, deleteButton}) => (
   <span>
     {person.name} {`${person.number} `}
@@ -48,6 +72,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [searchName, setSearchName] = useState('')
+  const [notification, setNotification] = useState({
+    message: null,
+    success: false
+  })
 
   useEffect( () => {
     personService
@@ -77,6 +105,20 @@ const App = () => {
     setPersons(updatedPersons)
   }
 
+  const notify = (message, success) => {
+    setNotification({
+      message: message,
+      success: success
+    })
+
+    setTimeout(() => {
+      setNotification({
+        message: null,
+        success: false
+      })
+    }, 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     if (!persons.contacts.some( person => person.name === newName)) {
@@ -95,6 +137,7 @@ const App = () => {
           })
           setNewName('')
           setPhoneNumber('')
+          notify(`${contact.name} was successfully added to the phone book`, true)
         })
     } else {
       const confirmation = window.confirm(
@@ -119,6 +162,15 @@ const App = () => {
               contacts: updatedContacts.contacts.concat(updatedContact),
               filtered: updatedContacts.contacts.concat(updatedContact)
             })
+
+            notify(`${updatedContact.name} number was successfully updated.`, true)
+          })
+          .catch(error => {
+            notify(`${contactToUpdate.name} no longer exists due to being removed prior to this action.`, false)
+            setPersons({
+              contacts: persons.contacts.filter(c => c.id !== contactToUpdate.id),
+              filtered: persons.filtered.filter(c => c.id !== contactToUpdate.id)
+            })
           })
       }
     }
@@ -142,6 +194,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification notification={notification} />
       <Filter query={searchName} handleFilter={handleSearchInput} />
       <h2>New Contact</h2>
       <ContactForm 
