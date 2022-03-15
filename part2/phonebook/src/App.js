@@ -139,6 +139,7 @@ const App = () => {
           setPhoneNumber('')
           notify(`${contact.name} was successfully added to the phone book`, true)
         })
+        .catch(error => notify(error.response.data.error, false))
     } else {
       const confirmation = window.confirm(
         `${newName} already exists in the phone book, replace the old number with the new one?`
