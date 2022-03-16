@@ -28,9 +28,38 @@ const favouriteBlog = (blogList) => {
     }
 }
 
+const mostBlogs = (blogList) => {
+    if (blogList.length === 0) {
+        return null
+    } else if (blogList.length === 1) {
+        return {
+            name: blogList[0].author,
+            blogs: 1
+        }
+    } else {
+        const authors = []
+        let blogs = [...blogList]
+
+        while (blogs.length > 0) {
+            const author = {
+                name: blogs[0].author,
+                blogs: blogs.length
+            }
+
+            blogs = blogs.filter(blog => blog.author !== author.name)
+            author.blogs -= blogs.length
+            authors.push(author) 
+        }
+
+        return authors.reduce((authorWithMost, author) => 
+            authorWithMost.blogs > author.blogs ? authorWithMost : author
+        )
+    }
+}
 
 module.exports = {
     dummy,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs
 }

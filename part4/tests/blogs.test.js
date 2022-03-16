@@ -107,3 +107,23 @@ describe('favourite blog', () => {
         })
     })
 })
+
+describe('most blogs', () => {
+    test('of empty list is zero', () => {
+        expect(listHelper.mostBlogs([])).toBe(null)
+    })
+
+    test('when list only has one blog equals an object with author name and total blogs of one', () => {
+        expect(listHelper.mostBlogs(blog)).toEqual({
+            name: "Edsger W. Dijkstra",
+            blogs: 1
+        })
+    })
+
+    test('of a bigger list is compared by number of blogs for each author', () => {
+        expect(listHelper.mostBlogs(blogs)).toEqual({
+            name: 'Robert C. Martin',
+            blogs: 3
+        })
+    })
+})
