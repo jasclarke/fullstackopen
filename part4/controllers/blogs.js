@@ -1,5 +1,4 @@
 const blogsRouter = require('express').Router()
-const { request, response } = require('../app')
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', (request, response) => {
@@ -22,9 +21,14 @@ blogsRouter.get('/:id', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response) => {
-    const blog = new Blog(request.body)
+    const blog = request.body
 
-    const savedBlog = await blog.save()
+    if (!blog.hasOwnProperty('likes')) {
+        blog.likes = 0
+    }
+
+    const blogToSave = new Blog(blog)
+    const savedBlog = await blogToSave.save()
     response.status(201).json(savedBlog)
 })
 
