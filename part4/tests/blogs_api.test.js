@@ -15,3 +15,8 @@ test('ensure all blog posts are returned', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.initialBlogs.length)
 }, 100000)
+
+test('blog posts unique identifier should be named id', async () => {
+    const response = await api.get(`/api/blogs/${helper.initialBlogs[0]._id}`)
+    expect(response.body.id).toBeDefined()
+})
