@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const blog = require('../models/blog')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./api_helper')
 
 beforeEach(async () => {
@@ -94,4 +94,70 @@ describe('modifying blog posts', () => {
         const updatedBlog = await api.put(`/api/blogs/${blogs[0].id}`).send(blogToUpdate).expect(200)
         expect(updatedBlog.body.likes).toBe(blogToUpdate.likes)
     }, 100000)
+})
+
+describe('Invalid users are not created and returns appropriate status code and error message', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+    })
+
+    test('Adding a user with no username', async () => {
+        const invalidUser = {
+            username: '',
+            password: 'test',
+            name: 'James',
+        }
+
+        const response = await api.post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+        
+        const message = JSON.parse(response.text)
+        expect(message.error).toBe('User validation failed: username: Username is required.')
+    })
+
+    test('Adding a user with a username of two characters', async () => {
+        const invalidUser = {
+            username: 'te',
+            password: 'test',
+            name: 'James',
+        }
+
+        const response = await api.post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+        
+        const message = JSON.parse(response.text)
+        expect(message.error).toBe('User validation failed: username: The username must be atleast three (3) characters long.')
+    })
+
+    test('Adding a user with no password', async () => {
+        const invalidUser = {
+            username: 'test',
+            password: '',
+            name: 'James',
+        }
+
+        const response = await api.post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+        
+        const message = JSON.parse(response.text)
+        expect(message.error).toBe('The password is required.')
+    })
+
+    test('Adding a user with a password of two characters', async () => {
+        const invalidUser = {
+            username: 'test',
+            password: 'te',
+            name: 'James',
+        }
+
+        const response = await api.post('/api/users')
+            .send(invalidUser)
+            .expect(400)
+        
+        const message = JSON.parse(response.text)
+        expect(message.error).toBe('The password must consist of at least three (3) characters.')
+    })
 })
