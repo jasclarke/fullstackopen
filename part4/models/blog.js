@@ -10,7 +10,11 @@ const blogSchema = new mongoose.Schema({
       type: String,
       required: 'The URL for the blog post must be submitted.'
     },
-    likes: Number
+    likes: Number,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
   })
 
 blogSchema.set('toJSON', {
