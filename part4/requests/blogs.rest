@@ -3,11 +3,11 @@ GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impkb2UiLCJpZCI6IjYyNGI0MDhjY2ZhMjQ1M2I2Y2RlYjBhMSIsImlhdCI6MTY0OTI3MjA1MiwiZXhwIjoxNjQ5Mjc1NjUyfQ.SUfABm2sACmDPubNb-dadrXG4FHmTUYHqR251KSlpx0
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impkb2UiLCJpZCI6IjYyNGI0MDhjY2ZhMjQ1M2I2Y2RlYjBhMSIsImlhdCI6MTY0OTI3MjA1MiwiZXhwIjoxNjQ5Mjc1NjUyfQ.SUfABm2sACmDPubNb-dadrXG4FHmTUYHqR251KSlpx0
 
 {
-    "title": "Stampede",
-    "author": "Double M",
+    "title": "Hulk",
+    "author": "Blaxx",
     "url": "test",
     "likes": 1,
     "user": "624b40a2cfa2453b6cdeb0a6"
