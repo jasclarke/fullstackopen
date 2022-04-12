@@ -15,7 +15,7 @@ const getTokenFromHeader = request => {
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
 
-    if (error.name === 'ValidationError' || 'CastError') {
+    if (error.name === 'ValidationError' || error.name === 'CastError') {
         response.statusMessage = error.message
         return response.status(400).json({ error: error.message })
     }

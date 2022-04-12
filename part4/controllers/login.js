@@ -6,6 +6,7 @@ const User = require('../models/user')
 loginRouter.post('/', async (request, response) => {
     const { username, password } = request.body
     const user = await User.findOne({ username })
+    
     const verifyPassword = user === null ? false : await bcrypt.compare(password, user.password)
     
     if (!(user && verifyPassword)) {
@@ -20,6 +21,7 @@ loginRouter.post('/', async (request, response) => {
     }
 
     const token = jwt.sign(tokenInfo, process.env.SECRET, { expiresIn: 60*60 })
+    
     response.status(200).send({ 
         token,
         username: user.username,

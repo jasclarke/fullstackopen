@@ -6,11 +6,34 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const helper = require('./api_helper')
 
-beforeEach(async () => {
+let token = 'bearer '
+let userId
+
+beforeAll( async () => {
+    await User.deleteMany({})
+    const user = await helper.addUser()
+    token += helper.generateToken(user._id, user.username)
+    userId = user._id
+}, 1000000)
+
+beforeEach ( async () => {
     await Blog.deleteMany({})
-    const blogs = helper.initialBlogs.map(blog => new Blog(blog).save())
+    const user = await User.findById(userId)
+    const blogs = helper.initialBlogs.map(blog => {
+        blog.user = user._id
+        new Blog(blog).save()
+    })
+
     await Promise.all(blogs)
-}, 100000)
+
+    const blogsFromDb = await helper.blogsInDb()
+
+    blogsFromDb.forEach(blog => {
+        user.blogs = user.blogs.concat(blog.id)
+    })
+
+    await user.save()
+})
 
 describe('retrieving blog posts', () => {
     test('ensure all blog posts are returned', async () => {
@@ -32,8 +55,8 @@ describe('adding blog posts', () => {
             author: 'Jason Clarke',
             likes: 9,
         }
-    
-        const savedBlog = await api.post('/api/blogs').send(blog)
+        
+        const savedBlog = await api.post('/api/blogs').send(blog).set({ 'Authorization': token})
         const blogs = await helper.blogsInDb()
         
         expect(blogs).toHaveLength(helper.initialBlogs.length + 1)
@@ -50,7 +73,7 @@ describe('adding blog posts', () => {
             author: 'Jason Clarke',
         }
     
-        const savedBlog = await api.post('/api/blogs').send(blog)
+        const savedBlog = await api.post('/api/blogs').send(blog).set({ 'Authorization': token })
     
         expect(savedBlog.body.likes).toBeDefined()
         expect(savedBlog.body.likes).toBe(0)
@@ -69,16 +92,32 @@ describe('adding blog posts', () => {
             url: 'http://badrequest400.com'
         }
     
-        await api.post('/api/blogs').send(blogOne).expect(400)
-        await api.post('/api/blogs').send(blogTwo).expect(400)
-        await api.post('/api/blogs').send(blogThree).expect(400)
+        await api.post('/api/blogs').send(blogOne).set({ 'Authorization': token}).expect(400)
+        await api.post('/api/blogs').send(blogTwo).set({ 'Authorization': token}).expect(400)
+        await api.post('/api/blogs').send(blogThree).set({ 'Authorization': token}).expect(400)
     }, 100000)
+
+    test('reject blog post without token', async () => {
+        const initialBlogs = await helper.blogsInDb()
+
+        const blog = {
+            title: 'Rejected Blog',
+            url: 'http://jasonclarke.dev',
+            author: 'Jason Clarke',
+            likes: 9,
+        }
+        
+        await api.post('/api/blogs').send(blog).expect(401)
+        const blogs = await helper.blogsInDb()
+
+        expect(blogs.length).toBe(initialBlogs.length)
+    }, 1000000)
 })
 
 describe('deleting blog posts', () => {
     test('ensure blog posts is deleted upon request', async () => {
         const blogsAtStart = await helper.blogsInDb()
-        await api.delete(`/api/blogs/${blogsAtStart[0].id}`).expect(204)
+        await api.delete(`/api/blogs/${blogsAtStart[0].id}`).set({ 'Authorization': token }).expect(204)
         
         const blogsAfterDeletion = await helper.blogsInDb()
         expect(blogsAfterDeletion).toHaveLength(blogsAtStart.length - 1)
@@ -97,10 +136,6 @@ describe('modifying blog posts', () => {
 })
 
 describe('Invalid users are not created and returns appropriate status code and error message', () => {
-    beforeEach(async () => {
-        await User.deleteMany({})
-    })
-
     test('Adding a user with no username', async () => {
         const invalidUser = {
             username: '',
@@ -114,7 +149,7 @@ describe('Invalid users are not created and returns appropriate status code and 
         
         const message = JSON.parse(response.text)
         expect(message.error).toBe('User validation failed: username: Username is required.')
-    })
+    }, 100000)
 
     test('Adding a user with a username of two characters', async () => {
         const invalidUser = {
@@ -129,7 +164,7 @@ describe('Invalid users are not created and returns appropriate status code and 
         
         const message = JSON.parse(response.text)
         expect(message.error).toBe('User validation failed: username: The username must be atleast three (3) characters long.')
-    })
+    }, 100000)
 
     test('Adding a user with no password', async () => {
         const invalidUser = {
@@ -144,7 +179,7 @@ describe('Invalid users are not created and returns appropriate status code and 
         
         const message = JSON.parse(response.text)
         expect(message.error).toBe('The password is required.')
-    })
+    }, 100000)
 
     test('Adding a user with a password of two characters', async () => {
         const invalidUser = {
@@ -159,5 +194,5 @@ describe('Invalid users are not created and returns appropriate status code and 
         
         const message = JSON.parse(response.text)
         expect(message.error).toBe('The password must consist of at least three (3) characters.')
-    })
+    }, 100000)
 })
