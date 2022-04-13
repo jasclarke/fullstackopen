@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const config = require('../utils/config')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -10,6 +11,7 @@ let token = 'bearer '
 let userId
 
 beforeAll( async () => {
+    await mongoose.connect(config.MONGODB_URI)
     await User.deleteMany({})
     const user = await helper.addUser()
     token += helper.generateToken(user._id, user.username)
@@ -33,7 +35,7 @@ beforeEach ( async () => {
     })
 
     await user.save()
-})
+}, 1000000)
 
 describe('retrieving blog posts', () => {
     test('ensure all blog posts are returned', async () => {
