@@ -10,6 +10,7 @@ const Login = ({storeUser}) => {
         
         try {
             const user = await login({username, password})
+            window.localStorage.setItem('blogAppUser', JSON.stringify(user))
             storeUser(user)
         } catch (exception) {
             console.log(exception)
