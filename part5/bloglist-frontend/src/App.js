@@ -30,7 +30,7 @@ const App = () => {
           ? <Login storeUser={(user) => setUser(user)} /> 
           : <>
               <p>{user.name} logged in <button onClick={logOut}>logout</button></p>
-              <BlogList blogs={blogs} />
+              <BlogList blogs={blogs} token={user.token} storeBlog={(blogs) => setBlogs(blogs)} />
             </>
       }
     </div>
