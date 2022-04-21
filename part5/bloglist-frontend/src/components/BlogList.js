@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import blogService from '../services/blogs'
 import Blog from './Blog'
 
-const BlogList = ({blogs, token, storeBlog}) => {
+const BlogList = ({blogs, token, storeBlog, showNotification}) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
@@ -18,12 +18,28 @@ const BlogList = ({blogs, token, storeBlog}) => {
         }
 
         const savedBlog = await blogService.create(blog, token)
+        
         setTitle('')
         setAuthor('')
         setUrl('')
         storeBlog(blogs.concat(savedBlog))
+        showNotification({
+          message: `${savedBlog.title} by ${savedBlog.author} was added`,
+          type: 'success'
+        })
+
+        setInterval(() => {
+          showNotification(null)
+        }, 5000);
       } catch (error) {
-        console.log(error)
+        showNotification({
+          message: error.response.statusText,
+          type: 'error'
+        })
+
+        setInterval(() => {
+          showNotification(null)
+        }, 5000);
       }
     }
 
