@@ -16,7 +16,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -34,6 +34,7 @@ const App = () => {
 
     try {
       const savedBlog = await blogService.create(blog, user.token)
+      savedBlog.user = { username: user.username }
       setBlogs(blogs.concat(savedBlog))
       setNotification({
         message: `${savedBlog.title} by ${savedBlog.author} was added`,
@@ -42,8 +43,9 @@ const App = () => {
 
       setTimeout(() => setNotification(null), 5000)
     } catch (error) {
+      console.log(error);
       setNotification({
-        message: error.response.statusText,
+        message: 'test',
         type: 'error'
       })
 
@@ -66,7 +68,28 @@ const App = () => {
       setTimeout(() => setNotification(null), 5000)
     } catch (error) {
       setNotification({
-        message: 'test',
+        message: error.response.data.error,
+        type: 'error'
+      })
+
+      setTimeout(() => setNotification(null), 5000)
+    }
+  }
+
+  const removeBlog = async blog => {
+    try {
+      await blogService.remove(blog.id, user.token)
+      setBlogs(blogs.filter(post => post.id !== blog.id))
+
+      setNotification({
+        message: `${blog.title} by ${blog.author} was deleted`,
+        type: 'success'
+      })
+
+      setTimeout(() => setNotification(null), 5000)
+    } catch (error) {
+      setNotification({
+        message: error.response.data.error,
         type: 'error'
       })
 
@@ -85,7 +108,7 @@ const App = () => {
               <Togglable buttonLabel='Add Blog' ref={blogFormRef}>
                 <BlogForm submitBlog={submitBlog} />
               </Togglable>
-              <BlogList blogs={blogs} updateBlog={updateBlog}/>
+              <BlogList blogs={blogs} updateBlog={updateBlog} removeBlog={removeBlog} username={user.username} />
             </>
       }
     </div>

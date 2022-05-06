@@ -37,7 +37,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
     const blog = {
         title: request.body.title,
         url: request.body.url,

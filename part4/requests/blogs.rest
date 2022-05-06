@@ -3,7 +3,7 @@ GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impkb2UiLCJpZCI6IjYyNGI0MDhjY2ZhMjQ1M2I2Y2RlYjBhMSIsImlhdCI6MTY1MTc5NDA3OCwiZXhwIjoxNjUxNzk3Njc4fQ.FqkxqvJgp8usqRSRgvmrZ0xIdQh7mIlCmWZ5FWoendY
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphZG9lIiwiaWQiOiI2MjRiNDBhMmNmYTI0NTNiNmNkZWIwYTYiLCJpYXQiOjE2NTE4NTE3MjcsImV4cCI6MTY1MTg1NTMyN30.iUKX6894s9OahPtXfw2Afg6F94ymzRKpU5Qt0AkeOhM
 
 {
     "title": "Stampede",
