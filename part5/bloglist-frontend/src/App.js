@@ -51,6 +51,29 @@ const App = () => {
     }
   }
 
+  const updateBlog = async blog => {
+    try {
+      const updatedBlog = await blogService.update(blog, user.token)
+      const blogIndex = blogs.map(blog => blog.id).indexOf(blog.id)
+      let updatedBlogs = [...blogs]
+      updatedBlogs.splice(blogIndex, 1, updatedBlog)
+      setBlogs(updatedBlogs)
+      setNotification({
+        message: `${updatedBlog.title} by ${updatedBlog.author} was liked`,
+        type: 'success'
+      })
+
+      setTimeout(() => setNotification(null), 5000)
+    } catch (error) {
+      setNotification({
+        message: 'test',
+        type: 'error'
+      })
+
+      setTimeout(() => setNotification(null), 5000)
+    }
+  }
+
   return (
     <div>
       {
@@ -62,7 +85,7 @@ const App = () => {
               <Togglable buttonLabel='Add Blog' ref={blogFormRef}>
                 <BlogForm submitBlog={submitBlog} />
               </Togglable>
-              <BlogList blogs={blogs} />
+              <BlogList blogs={blogs} updateBlog={updateBlog}/>
             </>
       }
     </div>
