@@ -3,6 +3,7 @@
     "json-server": "^0.17.0"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "prop-types": "^15.8.1"
   }
 }
