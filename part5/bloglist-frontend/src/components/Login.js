@@ -20,7 +20,7 @@ const Login = ({ storeUser }) => {
     return (
         <>
             <h2>Login</h2>
-            <form onSubmit={handleLogin}>
+            <form id="login-form" onSubmit={handleLogin}>
                 <div>
                     <label htmlFor='username'>Username:</label>
                     <input id='username' type='text' name='username' value={username} onChange={({ target }) => setUsername(target.value)} />
