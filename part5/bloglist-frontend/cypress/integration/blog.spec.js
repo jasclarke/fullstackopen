@@ -25,6 +25,12 @@ Cypress.Commands.add('addBlog', ({ title, author, url }) => {
     cy.visit('http://localhost:3000')
 })
 
+Cypress.Commands.add('likeBlog', (title, first) => {
+    cy.contains(title).parent().as('theBlog')
+    if (first) cy.get('@theBlog').contains('view').click()
+    cy.get('@theBlog').find('.like-btn').click()
+})
+
 describe('Blog App', function() {
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -93,6 +99,38 @@ describe('Blog App', function() {
             cy.get('@theBlog').contains('view').click()
             cy.get('@theBlog').find('.delete-btn').click()
             cy.get('#blog-list').should('not.contain', 'My second blog')
+        })
+
+        it('user cannot delete another user blog', function() {
+            cy.addUser({
+                username: 'paul',
+                password: 'password',
+                name: 'Paul Scholes'
+            })
+
+            cy.login({ username: 'paul', password: 'password' })
+            cy.contains('My second blog').parent().as('theBlog')
+            cy.get('@theBlog').contains('view').click()
+            cy.get('@theBlog').should('not.contain', 'delete')
+        })
+
+        it('bloglist arranges in order of likes', function() {
+            const firstTitle = 'My first blog'
+            const secondTitle = 'My second blog'
+            const thirdTitle = 'My third blog'
+
+            cy.likeBlog(secondTitle, true)
+            cy.likeBlog(thirdTitle, true)
+            cy.likeBlog(firstTitle, true)
+
+            cy.likeBlog(secondTitle, false)
+            cy.likeBlog(thirdTitle, false)
+
+            cy.likeBlog(secondTitle, false)
+
+            cy.get('.blog').eq(0).should('contain', secondTitle)
+            cy.get('.blog').eq(1).should('contain',thirdTitle)
+            cy.get('.blog').eq(2).should('contain', firstTitle)
         })
     })
 })
