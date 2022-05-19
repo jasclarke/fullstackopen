@@ -12,6 +12,19 @@ Cypress.Commands.add('login', ({ username, password }) => {
         })
 })
 
+Cypress.Commands.add('addBlog', ({ title, author, url }) => {
+    const token = JSON.parse(localStorage.getItem('blogAppUser')).token
+    const request = {
+        url: 'http://localhost:3003/api/blogs',
+        method: 'POST',
+        body: { title, author, url },
+        headers: { 'Authorization': `bearer ${token}` }
+    }
+
+    cy.request(request)
+    cy.visit('http://localhost:3000')
+})
+
 describe('Blog App', function() {
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -54,15 +67,25 @@ describe('Blog App', function() {
             })
 
             cy.login({ username: 'james', password: 'password' })
+            cy.addBlog({ title: 'My first blog', author: 'Johnny Q', url: 'http://first.blog' })
+            cy.addBlog({ title: 'My second blog', author: 'Johnny Depp', url: 'http://second.blog' })
+            cy.addBlog({ title: 'My third blog', author: 'Johnny King', url: 'http://third.blog' })
         })
 
         it('user can create blog', function() {
             cy.contains('Add Blog').click()
-            cy.get('#title').type('My first blog')
-            cy.get('#author').type('Johnny Q')
-            cy.get('#url').type('http://first.blog')
+            cy.get('#title').type('My test blog')
+            cy.get('#author').type('Test Author')
+            cy.get('#url').type('http://test.blog')
             cy.get('#new-blog-submit-button').click()
-            cy.contains('My first blog')
+            cy.contains('My test blog')
+        })
+
+        it('user can like a blog', function() {
+            cy.contains('My second blog').parent().as('theBlog')
+            cy.get('@theBlog').contains('view').click()
+            cy.get('@theBlog').find('.like-btn').click()
+            cy.get('@theBlog').contains('1')
         })
     })
 })
