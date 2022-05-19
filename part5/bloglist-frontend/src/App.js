@@ -98,11 +98,11 @@ const App = () => {
 
     return (
         <div>
+            <Notification notification={notification} />
             {
                 (user === null)
-                    ? <Login storeUser={(user) => setUser(user)} />
+                    ? <Login storeUser={(user) => setUser(user)} notify={(message) => setNotification(message)} />
                     : <>
-                        <Notification notification={notification} />
                         <p>{user.name} logged in <button onClick={logOut}>logout</button></p>
                         <Togglable buttonLabel='Add Blog' ref={blogFormRef}>
                             <BlogForm submitBlog={submitBlog} />

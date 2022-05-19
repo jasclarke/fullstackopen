@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import login from '../services/login'
 
-const Login = ({ storeUser }) => {
+const Login = ({ storeUser, notify }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
@@ -13,7 +13,12 @@ const Login = ({ storeUser }) => {
             window.localStorage.setItem('blogAppUser', JSON.stringify(user))
             storeUser(user)
         } catch (exception) {
-            console.log(exception)
+            notify({
+                message: exception.response.data.error,
+                type: 'error'
+            })
+
+            setTimeout(() => notify(null), 5000)
         }
     }
 
