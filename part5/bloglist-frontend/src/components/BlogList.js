@@ -6,7 +6,7 @@ const BlogList = ({ blogs, updateBlog, removeBlog, username }) => {
     blogsCopy.sort((a, b) => b.likes - a.likes)
 
     return (
-        <div>
+        <div id='blog-list'>
             <h2>blogs</h2>
             { blogsCopy.map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} username={username} />) }
         </div>

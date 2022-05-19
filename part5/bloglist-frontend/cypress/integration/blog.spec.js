@@ -87,5 +87,12 @@ describe('Blog App', function() {
             cy.get('@theBlog').find('.like-btn').click()
             cy.get('@theBlog').contains('1')
         })
+
+        it('user can delete blog', function() {
+            cy.contains('My second blog').parent().as('theBlog')
+            cy.get('@theBlog').contains('view').click()
+            cy.get('@theBlog').find('.delete-btn').click()
+            cy.get('#blog-list').should('not.contain', 'My second blog')
+        })
     })
 })
