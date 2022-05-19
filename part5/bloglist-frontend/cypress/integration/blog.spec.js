@@ -1,3 +1,17 @@
+Cypress.Commands.add('addUser', ({ username, password, name }) => {
+    cy.request('POST', 'http://localhost:3003/api/users', { username, password, name })
+    localStorage.removeItem('blogAppUser')
+    cy.visit('http://localhost:3000')
+})
+
+Cypress.Commands.add('login', ({ username, password }) => {
+    cy.request('POST', 'http://localhost:3003/api/login', { username, password })
+        .then(response => {
+            localStorage.setItem('blogAppUser', JSON.stringify(response.body))
+            cy.visit('http://localhost:3000')
+        })
+})
+
 describe('Blog App', function() {
     beforeEach(function() {
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -10,15 +24,11 @@ describe('Blog App', function() {
 
     describe('Login testing', function() {
         beforeEach(function() {
-            const user = {
+            cy.addUser({
                 username: 'james',
                 password: 'password',
                 name: 'James Gardner'
-            }
-
-            cy.request('POST', 'http://localhost:3003/api/users', user)
-            cy.visit('http://localhost:3000')
-            localStorage.removeItem('blogAppUser')
+            })
         })
 
         it('A user can login with correct credentials', function() {
@@ -32,6 +42,27 @@ describe('Blog App', function() {
             cy.get('#password').type('credentials')
             cy.get('#login-form').contains('login').click()
             cy.contains('Incorrect username or password')
+        })
+    })
+
+    describe('when logged in', function() {
+        beforeEach(function() {
+            cy.addUser({
+                username: 'james',
+                password: 'password',
+                name: 'James Gardner'
+            })
+
+            cy.login({ username: 'james', password: 'password' })
+        })
+
+        it('user can create blog', function() {
+            cy.contains('Add Blog').click()
+            cy.get('#title').type('My first blog')
+            cy.get('#author').type('Johnny Q')
+            cy.get('#url').type('http://first.blog')
+            cy.get('#new-blog-submit-button').click()
+            cy.contains('My first blog')
         })
     })
 })
